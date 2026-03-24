@@ -37,6 +37,11 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
 }
 
 dependencies {
@@ -46,6 +51,13 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.pdfbox.android)
+    implementation(libs.commons.csv)
+    implementation(libs.androidx.fragment)
+    implementation(libs.poi.ooxml.lite) {
+        exclude(group = "stax", module = "stax-api")
+        exclude(group = "xml-apis", module = "xml-apis")
+    }
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
