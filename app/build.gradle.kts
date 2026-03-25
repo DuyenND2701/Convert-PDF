@@ -49,15 +49,14 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    implementation("com.google.code.gson:gson:2.13.2")
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.pdfbox.android)
     implementation(libs.commons.csv)
     implementation(libs.androidx.fragment)
-    implementation(libs.poi.ooxml.lite) {
-        exclude(group = "stax", module = "stax-api")
-        exclude(group = "xml-apis", module = "xml-apis")
-    }
+    implementation(libs.poi)
+    implementation(libs.poi.ooxml)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
