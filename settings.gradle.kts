@@ -9,19 +9,17 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
-        maven {
-            url = uri("https://releases.aspose.com/java/repo/")
-        }
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
+        maven { url = uri("https://repo.itextpdf.com/repository/maven-releases") }
     }
 }
 
 rootProject.name = "Covert PDF Application"
 include(":app")
- 

@@ -14,7 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.covertpdfapplication.R
 import com.example.covertpdfapplication.common.FormatData
 import com.example.covertpdfapplication.convert.converttopdf.factory.ConvertToPdfFactory
-import com.example.covertpdfapplication.preview.PreviewFragment
+import com.example.covertpdfapplication.preview.fragement.PreviewFragment
 import com.example.covertpdfapplication.uploadfile.model.SelectedFile
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
@@ -95,8 +95,10 @@ class UploadFileFragment : Fragment() {
                 )
 
                 if (result != null) {
-                    Toast.makeText(requireContext(), "Convert thành công", Toast.LENGTH_SHORT).show()
-                    openPreview(result.absolutePath)
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(requireContext(), "Convert thành công", Toast.LENGTH_SHORT).show()
+                        openPreview(result.absolutePath)
+                    }
                 } else {
                     Toast.makeText(requireContext(), "Convert thất bại", Toast.LENGTH_SHORT).show()
                 }
@@ -107,9 +109,20 @@ class UploadFileFragment : Fragment() {
     }
 
     private fun openPreview(path: String) {
-        val intent = android.content.Intent(requireContext(), PreviewFragment::class.java)
-        intent.putExtra("pdf_path", path)
-        startActivity(intent)
+        // 1. Khởi tạo Fragment Preview kèm theo đường dẫn file PDF vừa convert xong
+        val previewFragment = PreviewFragment.newInstance(path)
+
+        // 2. Thực hiện transaction để thay thế màn hình Upload bằng màn hình Preview
+        parentFragmentManager.beginTransaction()
+            .setCustomAnimations(
+                android.R.anim.fade_in,
+                android.R.anim.fade_out,
+                android.R.anim.fade_in,
+                android.R.anim.fade_out
+            )
+            .replace(R.id.fragment_container, previewFragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun showBottomSheet() {
@@ -156,7 +169,7 @@ class UploadFileFragment : Fragment() {
                     size = size,
                     time = time,
                     uri = uri,
-                    isSelected = existingFile.isSelected, // Giữ nguyên trạng thái đã chọn trước đó
+                    isSelected = existingFile.isSelected,
                     version = newVersion
                 )
             } else {

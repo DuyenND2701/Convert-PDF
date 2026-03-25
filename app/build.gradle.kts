@@ -37,26 +37,34 @@ android {
     buildFeatures {
         viewBinding = true
     }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation("com.google.code.gson:gson:2.13.2")
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.fragment)
+    implementation(libs.itext.kernel)
+    implementation(libs.itext.layout)
+    implementation(libs.itext.io)
+    implementation(libs.poi) {
+        exclude(group = "org.bouncycastle")
+    }
+    implementation(libs.poi.ooxml) {
+        exclude(group = "org.bouncycastle")
+        exclude(group = "xml-apis", module = "xml-apis")
+    }
+    implementation(libs.poi.scratchpad) {
+        exclude(group = "org.bouncycastle")
+    }
+    implementation(libs.bouncy.bcprov)
+    implementation(libs.bouncy.bcpkix)
+    implementation("com.google.code.gson:gson:2.13.2")
     implementation(libs.pdfbox.android)
     implementation(libs.commons.csv)
-    implementation(libs.androidx.fragment)
-    implementation(libs.poi)
-    implementation(libs.poi.ooxml)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -6,7 +6,6 @@
     android:orientation="vertical"
     android:background="#F5F5F5">
 
-    <!-- HEADER -->
     <TextView
         android:id="@+id/tv_label_preview"
         android:layout_width="match_parent"
@@ -24,10 +23,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:fastScrollEnabled="true"
-        app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
-        app:fastScrollVerticalTrackDrawable="@drawable/track_drawable" />
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+
 
     <LinearLayout
         android:id="@+id/layout_bottom_fixed"
