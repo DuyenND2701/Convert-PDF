@@ -9,6 +9,9 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
+        maven {
+            url = uri("https://releases.aspose.com/java/repo/")
+        }
     }
 }
 dependencyResolutionManagement {

@@ -13,6 +13,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.covertpdfapplication.R
 import com.example.covertpdfapplication.common.FormatData
+import com.example.covertpdfapplication.convert.converttopdf.factory.ConvertToPdfFactory
+import com.example.covertpdfapplication.preview.PreviewFragment
 import com.example.covertpdfapplication.uploadfile.model.SelectedFile
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
@@ -27,8 +29,6 @@ class UploadFileFragment : Fragment() {
 
     private val PREFS_NAME = "UploadPrefs"
     private val KEY_LAST_FILE = "LastFileName"
-
-    // Danh sách lưu trữ file để không bị mất khi đóng/mở Dialog
     private val globalSelectedFiles = mutableListOf<SelectedFile>()
 
     // View thuộc Fragment chính
@@ -67,15 +67,49 @@ class UploadFileFragment : Fragment() {
         btnAddFileMain?.setOnClickListener { showBottomSheet() }
 
         btnConvert?.setOnClickListener {
-            val selectedCount = globalSelectedFiles.count { it.isSelected }
-            if (selectedCount > 0) {
-                Toast.makeText(requireContext(), "Đang chuẩn bị chuyển đổi $selectedCount tệp", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(requireContext(), "Vui lòng chọn ít nhất một tệp trong 'Gần đây'", Toast.LENGTH_SHORT).show()
+
+            val selectedFiles = globalSelectedFiles.filter { it.isSelected }
+
+            if (selectedFiles.isEmpty()) {
+                Toast.makeText(requireContext(), "Chọn file trước", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            lifecycleScope.launch {
+
+                val factory = ConvertToPdfFactory(requireContext())
+
+                val firstFile = selectedFiles.first()
+                val ext = firstFile.name.substringAfterLast(".", "")
+
+                val converter = factory.getConverter(ext)
+
+                if (converter == null) {
+                    Toast.makeText(requireContext(), "Không hỗ trợ format", Toast.LENGTH_SHORT).show()
+                    return@launch
+                }
+
+                val result = converter.convertToPdf(
+                    requireContext(),
+                    selectedFiles.map { it.uri }
+                )
+
+                if (result != null) {
+                    Toast.makeText(requireContext(), "Convert thành công", Toast.LENGTH_SHORT).show()
+                    openPreview(result.absolutePath)
+                } else {
+                    Toast.makeText(requireContext(), "Convert thất bại", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch { setupSourceSpinner() }
+    }
+
+    private fun openPreview(path: String) {
+        val intent = android.content.Intent(requireContext(), PreviewFragment::class.java)
+        intent.putExtra("pdf_path", path)
+        startActivity(intent)
     }
 
     private fun showBottomSheet() {
@@ -113,7 +147,7 @@ class UploadFileFragment : Fragment() {
             val existingFile = globalSelectedFiles.find { it.name == name }
 
             if (existingFile != null) {
-                // Nếu trùng: Ghi đè thông tin và tăng version
+                // Ghi đè thông tin và tăng version
                 val index = globalSelectedFiles.indexOf(existingFile)
                 val newVersion = existingFile.version + 1
 
@@ -126,12 +160,12 @@ class UploadFileFragment : Fragment() {
                     version = newVersion
                 )
             } else {
-                // Nếu chưa có: Thêm mới với mặc định V1
+                // Thêm mới với mặc định V1
                 globalSelectedFiles.add(SelectedFile(name, size, time, uri, version = 1))
             }
         }
 
-        // Vẽ lại toàn bộ danh sách để cập nhật V1 -> V2
+        // cập nhật V1 -> V2
         reloadFilesToUI()
 
         if (globalSelectedFiles.isNotEmpty()) {
