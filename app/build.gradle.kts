@@ -46,25 +46,19 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.fragment)
+
     implementation(libs.itext.kernel)
     implementation(libs.itext.layout)
     implementation(libs.itext.io)
-    implementation(libs.poi) {
-        exclude(group = "org.bouncycastle")
-    }
-    implementation(libs.poi.ooxml) {
-        exclude(group = "org.bouncycastle")
-        exclude(group = "xml-apis", module = "xml-apis")
-    }
-    implementation(libs.poi.scratchpad) {
-        exclude(group = "org.bouncycastle")
-    }
+
+    implementation("com.github.and-asf:poi-android:5.2.3")
+    implementation("com.github.and-asf:poi-android-ooxml:5.2.3")
+
     implementation(libs.bouncy.bcprov)
     implementation(libs.bouncy.bcpkix)
     implementation("com.google.code.gson:gson:2.13.2")
     implementation(libs.pdfbox.android)
     implementation(libs.commons.csv)
-
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
